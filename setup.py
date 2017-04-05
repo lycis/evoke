@@ -13,6 +13,9 @@ setup(name='evoke',
       author_email='daniel@deder.at',
       license='GPL 3.0',
       packages=['evoke'],
+      install_requires=[
+        'argparse'
+      ],
       entry_points={
           'console_scripts': [
               'evoke=evoke.main:main',
