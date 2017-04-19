@@ -1,5 +1,14 @@
 import argparse
 import os.path
+from pathlib import Path
+from evoke.library import init as init_evoke
+
+
+class LibraryNotFound(Exception):
+
+    def __init__(self, path):
+        self.path = path
+        super(LibraryNotFound, self).__init__(path)
 
 
 def main():
@@ -9,7 +18,11 @@ def main():
     if args.verbose:
         print("recalling evocation '{0}'...\n".format(args.evocation))
 
-    library = load_library(args.evocation)
+    try:
+        library = load_library(args.evocation)
+    except LibraryNotFound as e:
+        print("library '{}' not found\n".format(e.path))
+
 
 def parse_args():
     global args
@@ -21,6 +34,7 @@ def parse_args():
     parser.add_argument('-v, --verbose', dest='verbose', action='store_true')
     args = parser.parse_args()
 
+
 def load_library(evocation: str) -> dict:
     """
     loads the library for the given evocation, or the users default library
@@ -30,14 +44,29 @@ def load_library(evocation: str) -> dict:
     """
     global args
 
-    lib_path = evocation.split('/')[:-1]
+    lib_path = '/'.join(evocation.split('/')[:-1])
 
     if args.verbose:
         print('loading library path: {0}'.format(lib_path))
 
+    candidates = [
+        Path.cwd() / '.evoke/lib/',
+        Path.home() / '.evoke/lib/',
+        Path(os.path.dirname(init_evoke.__file__))
+    ]
 
+    library_dir = None
+    for c in candidates:
+        ld = c / lib_path
+        if ld.exists():
+            library_dir = ld
+            break
+
+    if library_dir is None:
+        raise LibraryNotFound(lib_path)
 
     return {}
+
 
 if __name__ == '__main__':
     main()
