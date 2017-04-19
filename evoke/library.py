@@ -91,14 +91,17 @@ class Library:
                  of that name does not exist)
         """
 
-        if not name in self.index.snippets:
+        if not name in self.index['snippets']:
             return None
 
         # TODO load from other destinations
-        if not 'content' in self.index['snippets']:
+        if not 'content' in self.index['snippets'][name]:
             return None
 
-        return self.index.snippets['content']
+        return self.index['snippets'][name]['content']
+
+    def __getitem__(self, item):
+        return self.snippet(item)
 
 
 def _find_library_dir(libname: str) -> str:

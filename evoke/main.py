@@ -23,6 +23,18 @@ def main():
         print("failed to load library '{}': {}\n".format(e.name, e.error))
         exit(1)
 
+    snippet_name = args.evocation.split('/')[-1]
+    if args.verbose:
+        print("retrieving content of snippet '{}'\n".format(snippet_name))
+
+    snippet = library[snippet_name]
+    if snippet is None:
+        print("no such evocation\n")
+        exit(1)
+
+    print("Content:\n{}\n".format(snippet))
+
+
 
 def parse_args():
     global args

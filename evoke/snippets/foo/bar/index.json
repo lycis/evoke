@@ -1,8 +1,8 @@
 {
   "description": "some test functions",
   "snippets": {
-    "test": {
-      "content": "echo \"Hello, World!\""
+    "thunder": {
+      "content": "#!bash\necho \"BOOOOOM!\""
     }
   }
 }
