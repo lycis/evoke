@@ -54,6 +54,52 @@ class Library:
             except json.JSONDecodeError as e:
                 raise BrokenLibrary(self.name, e.msg)
 
+#       some sanity checks for the index
+        if "description" in self.index and not isinstance(self.index['description'], str):
+            raise BrokenLibrary(self.name, 'description is not a string')
+
+        if not 'snippets' in self.index:
+            raise BrokenLibrary(self.name, 'index is missing snippets data')
+
+        if not isinstance(self.index['snippets'], dict):
+            raise BrokenLibrary(self.name, 'index snippets entry not a map')
+
+
+
+    def description(self) -> str:
+        """
+        Returns the description of the library if set or an empty
+        string if not given.
+
+        :return: description of the library if set
+        """
+
+        if not 'description' in self.index:
+            return ''
+
+        return self.index['description']
+
+    def snippet(self, name: str):
+        """
+        Gives the content of a snippet.
+
+        When necessary the content will be downloaded from a
+        remote destination or a file when the content if required.
+
+        :param name: name of the snippet
+        :return: content of the snippet (or None if a snippet
+                 of that name does not exist)
+        """
+
+        if not name in self.index.snippets:
+            return None
+
+        # TODO load from other destinations
+        if not 'content' in self.index['snippets']:
+            return None
+
+        return self.index.snippets['content']
+
 
 def _find_library_dir(libname: str) -> str:
     """
