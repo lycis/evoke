@@ -47,3 +47,17 @@ def create_interpreter(type: str, script: str) -> Interpreter:
         raise BadInterpreter(type, "interpreter object has wrong type")
 
     return ip
+
+
+class InterpreterError(Exception):
+    """
+    This exception type indicates that an internal error occurred in the
+    interpreter. This might be e.g. that required binaries were not found
+    or something else that is preventing the interpreter from running.
+
+    It does *not* indicate an error related to the execution of a script
+    by the interpreter!
+    """
+
+    def __init__(self, reason: str):
+        self.reason = reason
