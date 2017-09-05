@@ -1,5 +1,16 @@
+from importlib import import_module
+
+
+class InterpreterImplementationError(Exception):
+
+    def __init__(self, error):
+        self.error = error
+
+
 class Interpreter:
-    pass
+
+    def run(self, script: str):
+        raise InterpreterImplementationError("method run(script) not implemented")
 
 
 class BadInterpreter(Exception):
@@ -7,8 +18,9 @@ class BadInterpreter(Exception):
     Indicates that the given interpreter does not exist
     """
 
-    def __init__(self, type: str):
+    def __init__(self, type: str, reason: str = None):
         self.type = type
+        self.reason = reason
 
 
 def create_interpreter(type: str, script: str) -> Interpreter:
@@ -19,4 +31,19 @@ def create_interpreter(type: str, script: str) -> Interpreter:
     :param script: the script that the interpreter shall be prepared to run
     :return: instance of the fitting interpreter type
     """
-    raise BadInterpreter(type)
+
+    ip = None
+    try:
+        mod = import_module("evoke.interpreter.{}".format(type))
+    except ImportError as e:
+        raise BadInterpreter(type)
+
+    ip = mod.build()
+
+    if ip is None:
+        raise BadInterpreter(type)
+
+    if not isinstance(ip, Interpreter):
+        raise BadInterpreter(type, "interpreter object has wrong type")
+
+    return ip

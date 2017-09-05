@@ -54,10 +54,13 @@ def execute_snippet(snip):
     try:
        ip = snip.interpreter()
     except BadInterpreter as e:
-        print("Failed to load interpreter for type '{}'. Maybe you need to install it?".format(e.type))
+        if e.reason is None:
+            print("Failed to load interpreter for type '{}'. Maybe you need to install it?".format(e.type))
+        else:
+            print("Failed to load interpreter for type '{}': {}".format(e.type, e.reason))
         exit(1)
 
-    ip.run()
+    ip.run(snip.content)
 
 
 if __name__ == '__main__':

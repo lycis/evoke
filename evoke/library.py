@@ -22,7 +22,7 @@ class Snippet:
 
 
     def interpreter(self):
-        ip = create_interpreter(self.interpreter_type, self.content)
+        return create_interpreter(self.interpreter_type, self.content)
 
 
 class LibraryNotFound(Exception):
