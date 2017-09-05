@@ -7,7 +7,8 @@ def main():
     global args
     parse_args()
     snip = get_snippet(args)
-    execute_snippet(snip)
+    if not execute_snippet(snip):
+        exit(1)
 
 
 def get_snippet(args) -> str:
@@ -60,7 +61,14 @@ def execute_snippet(snip):
             print("Failed to load interpreter for type '{}': {}".format(e.type, e.reason))
         exit(1)
 
-    ip.run(snip.content)
+    success = ip.run(snip.content)
+    print("Evokation ended: ", end="")
+    if success:
+        print("SUCCESS")
+    else:
+        print("FAILED")
+
+    return success
 
 
 if __name__ == '__main__':

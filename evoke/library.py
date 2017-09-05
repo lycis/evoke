@@ -11,7 +11,8 @@ class Snippet:
     Represents a code snippet and is stringy.
     """
 
-    def __init__(self, content: str):
+    def __init__(self, name: str, content: str):
+        self.name = name # type: str
         self.interpreter_type = "python" # type: str
 
         ca = content.split('\n')
@@ -121,7 +122,7 @@ class Library:
 
         snippet_data = self.index['snippets'][name]
         content =  snippet_data['content']
-        s = Snippet(content)
+        s = Snippet(name, content)
 
         if 'interpreter' in snippet_data:
             if not isinstance(snippet_data['interpreter'], str):

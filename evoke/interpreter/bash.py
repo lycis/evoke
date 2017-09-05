@@ -12,8 +12,13 @@ class Bash(Interpreter):
         tempscript.write(script)
         tempscript.close()
         os.chmod(tempscript.name, 0o700)
-        call(tempscript.name)
+        rc = call(tempscript.name)
         os.remove(tempscript.name)
+
+        if rc != 0:
+            return False
+
+        return True
 
 def build() -> Bash:
     return Bash()
