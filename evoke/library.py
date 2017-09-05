@@ -1,7 +1,28 @@
 from pathlib import Path
 from os.path import dirname
+
+from evoke.interpreter import create_interpreter
 from evoke.snippets import anchor as internal_lib_anchor
 import json
+
+
+class Snippet:
+    """
+    Represents a code snippet and is stringy.
+    """
+
+    def __init__(self, content: str):
+        self.interpreter_type = "python" # type: str
+
+        ca = content.split('\n')
+        if ca[0].startswith('#!'):
+            self.interpreter_type = ca.pop(0)[2:]
+
+        self.content = content # type: str
+
+
+    def interpreter(self):
+        ip = create_interpreter(self.interpreter_type, self.content)
 
 
 class LibraryNotFound(Exception):
@@ -79,7 +100,7 @@ class Library:
 
         return self.index['description']
 
-    def snippet(self, name: str):
+    def snippet(self, name: str) -> Snippet:
         """
         Gives the content of a snippet.
 
@@ -98,7 +119,8 @@ class Library:
         if not 'content' in self.index['snippets'][name]:
             return None
 
-        return self.index['snippets'][name]['content']
+        content =  self.index['snippets'][name]['content']
+        return Snippet(content)
 
     def __getitem__(self, item):
         return self.snippet(item)
@@ -129,3 +151,4 @@ def _find_library_dir(libname: str) -> str:
         raise LibraryNotFound(libname)
 
     return library_dir
+

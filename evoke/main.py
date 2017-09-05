@@ -1,12 +1,16 @@
 import argparse
-import os.path
-from library import Library, LibraryNotFound, BrokenLibrary
+from evoke.library import Library, LibraryNotFound, BrokenLibrary
+from evoke.interpreter import BadInterpreter
 
 
 def main():
     global args
     parse_args()
+    snip = get_snippet(args)
+    execute_snippet(snip)
 
+
+def get_snippet(args) -> str:
     if args.verbose:
         print("recalling evocation '{0}'...\n".format(args.evocation))
 
@@ -32,7 +36,7 @@ def main():
         print("no such evocation\n")
         exit(1)
 
-    print("Content:\n{}\n".format(snippet))
+    return snippet
 
 
 
@@ -41,13 +45,19 @@ def parse_args():
     parser = argparse.ArgumentParser(prog='evoke',
                                      description='summon powerful evocations from your tomes of knowlegde')
     parser.add_argument('evocation', type=str, help='name of the evocation you want to call')
-    parser.add_argument('-l, --library', type=str, dest='library', help='path to the evocations library',
-                        default=os.path.expanduser("~"))
     parser.add_argument('-v, --verbose', dest='verbose', action='store_true')
     args = parser.parse_args()
 
 
+def execute_snippet(snip):
+    ip = None
+    try:
+       ip = snip.interpreter()
+    except BadInterpreter as e:
+        print("Failed to load interpreter for type '{}'. Maybe you need to install it?".format(e.type))
+        exit(1)
 
+    ip.run()
 
 
 if __name__ == '__main__':
