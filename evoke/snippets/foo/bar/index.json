@@ -3,6 +3,10 @@
   "snippets": {
     "thunder": {
       "content": "#!bash\necho \"BOOOOOM!\""
+    },
+    "extint": {
+      "interpreter": "javascript",
+      "content": "console.log(\"foobar\");\n"
     }
   }
 }

@@ -119,8 +119,17 @@ class Library:
         if not 'content' in self.index['snippets'][name]:
             return None
 
-        content =  self.index['snippets'][name]['content']
-        return Snippet(content)
+        snippet_data = self.index['snippets'][name]
+        content =  snippet_data['content']
+        s = Snippet(content)
+
+        if 'interpreter' in snippet_data:
+            if not isinstance(snippet_data['interpreter'], str):
+                raise BrokenLibrary(self.name, 'interpreter of {} is not string'.format(name))
+
+            s.interpreter_type = snippet_data['interpreter']
+
+        return s
 
     def __getitem__(self, item):
         return self.snippet(item)
