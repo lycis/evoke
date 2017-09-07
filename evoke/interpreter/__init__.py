@@ -9,6 +9,9 @@ class InterpreterImplementationError(Exception):
 
 class Interpreter:
 
+    def __init__(self, qualifier: str):
+        self.qualifier = qualifier
+
     def run(self, script: str):
         raise InterpreterImplementationError("method run(script) not implemented")
 
@@ -31,6 +34,10 @@ def create_interpreter(type: str, script: str) -> Interpreter:
     :param script: the script that the interpreter shall be prepared to run
     :return: instance of the fitting interpreter type
     """
+    qualifier = None
+    if ":" in type:
+        qualifier = ":".join(type.split(":")[1:])
+        type = type.split(":")[0]
 
     ip = None
     try:
@@ -38,15 +45,12 @@ def create_interpreter(type: str, script: str) -> Interpreter:
     except ImportError as e:
         raise BadInterpreter(type)
 
-    ip = mod.build()
+    constructor = mod.constructor()
 
-    if ip is None:
+    if constructor is None:
         raise BadInterpreter(type)
 
-    if not isinstance(ip, Interpreter):
-        raise BadInterpreter(type, "interpreter object has wrong type")
-
-    return ip
+    return constructor(qualifier)
 
 
 class InterpreterError(Exception):

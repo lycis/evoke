@@ -4,11 +4,11 @@ from tempfile import NamedTemporaryFile
 import os
 
 
-class Bash(Interpreter):
+class Shell(Interpreter):
 
     def run(self, script: str):
         tempscript = NamedTemporaryFile("w", delete=False)
-        tempscript.write("#!/bin/bash\n")
+        tempscript.write("#!/bin/{}\n".format(self.qualifier))
         tempscript.write(script)
         tempscript.close()
         os.chmod(tempscript.name, 0o700)
@@ -20,5 +20,5 @@ class Bash(Interpreter):
 
         return True
 
-def build() -> Bash:
-    return Bash()
+def constructor():
+    return Shell

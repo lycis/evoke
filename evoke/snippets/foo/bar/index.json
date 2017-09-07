@@ -5,7 +5,7 @@
       "content": "#!bash\necho \"BOOOOOM!\""
     },
     "extint": {
-      "interpreter": "javascript",
+      "interpreter": "shell:bash",
       "content": "console.log(\"foobar\");\n"
     }
   }
