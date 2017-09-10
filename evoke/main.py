@@ -51,9 +51,10 @@ def parse_args():
 
 
 def execute_snippet(snip):
-    ip = None
     try:
        ip = snip.interpreter()
+       with ip:
+           success = ip.run(snip.content)
     except BadInterpreter as e:
         if e.reason is None:
             print("Failed to load interpreter for type '{}'. Maybe you need to install it?".format(e.type))
@@ -61,7 +62,6 @@ def execute_snippet(snip):
             print("Failed to load interpreter for type '{}': {}".format(e.type, e.reason))
         exit(1)
 
-    success = ip.run(snip.content)
     print("Evokation ended: ", end="")
     if success:
         print("SUCCESS")

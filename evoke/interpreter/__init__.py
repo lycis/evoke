@@ -1,4 +1,7 @@
 from importlib import import_module
+from tempfile import NamedTemporaryFile
+
+import os
 
 
 class InterpreterImplementationError(Exception):
@@ -8,12 +11,41 @@ class InterpreterImplementationError(Exception):
 
 
 class Interpreter:
+    """
+    This class is the base for all interpreters that are
+    available. It provides some basic, common functions and defines
+    the *run* entry point that interpretes will use.
+    """
 
     def __init__(self, qualifier: str):
         self.qualifier = qualifier
+        self.tempfiles = []
 
     def run(self, script: str):
         raise InterpreterImplementationError("method run(script) not implemented")
+
+    def str_to_temporary_file(self, content) -> str:
+        """
+        Stores the given content into a temporary file and
+        will return the name of it. It will be cleaned when
+        the interpreter context is closed.
+
+        :param content: file content
+        :return: name of the generated file
+        """
+
+        tempscript = NamedTemporaryFile("w", delete=False)
+        tempscript.write(content)
+        tempscript.close()
+        self.tempfiles.append(tempscript.name)
+        return tempscript.name
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        for f in self.tempfiles:
+            os.remove(f)
 
 
 class BadInterpreter(Exception):

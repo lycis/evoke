@@ -7,6 +7,10 @@
     "extint": {
       "interpreter": "shell:bash",
       "content": "console.log(\"foobar\");\n"
+    },
+    "py": {
+      "interpreter": "python:2",
+      "content": "print(1234)"
     }
   }
 }
